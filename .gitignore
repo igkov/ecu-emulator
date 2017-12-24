@@ -1,0 +1,8 @@
+*.bak
+*.Administrator
+*.dep
+.out_rel
+.out
+.dep
+.lst
+.obj

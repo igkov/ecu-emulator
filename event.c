@@ -4,8 +4,6 @@
 
 #include "event.h"
 
-extern uint32_t SystemCoreClock; 
-
 volatile uint32_t msTicks; // counts timeTicks
 timer_event_t timer_events[MAX_EVENT];
 
