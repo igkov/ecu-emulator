@@ -18,7 +18,7 @@ SECTIONS                                    /* Section Definitions */
     . = ALIGN(4);
     .text :                                 /* first section is .text which is used for code */
     {
-        *startup.o (.text)                  /* Startup code */
+        *startup_LPC11xx_gcc.o (.text)                  /* Startup code */
         *(.text)                            /* remaining code */
     } > ROM
     

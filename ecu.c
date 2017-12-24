@@ -296,6 +296,7 @@ int main (void) {
 
 #if defined( _DBGOUT )
 	UART_Init(115200);
+	DBG("UART_Init() ok!\r\n");
 #endif
 	event_init();
 	leds_init();

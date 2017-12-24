@@ -28,8 +28,11 @@ CFG_GCC_DIR             = /gccarm/bin/
 # (Note: 3 is not always the best optimization level!)
 #OPT = 0
 #OPT = 1
-#OPT = 2
-OPT = s
+OPT = 2
+#OPT = s
+# На уровне оптимизации -Os, есть проблемы 
+#
+#
 
 # List C source files here:
 SRC     = ecu.c
@@ -98,7 +101,7 @@ ALLSRC = $(SRC) $(CPPSRC) $(ASRC)
 CSTANDARD = -std=gnu99
 
 # Place -D or -U options for C here:
-CDEFS =  -D__GCC__ -D__ARM__ -DCORTEX
+CDEFS =  -D__GCC__ -D__ARM__ -DCORTEX -D_DBGOUT
 
 # Place -I options here:
 CINCS = 
@@ -151,8 +154,8 @@ CPPFLAGS  += -fno-rtti -fno-exceptions -fno-use-cxa-atexit
 #  -Wl,...: tell GCC to pass this to linker.
 #  -Map:    create map file
 #  --cref:  add cross reference to	map file
-LDFLAGS  = -nostartfiles -Wl,-Map=.out/$(TARGET).map,--cref
-LDFLAGS += -lc -lm -lgcc -L./ -L$(CFG_LIB_DIR) -mthumb-interwork 
+LDFLAGS  = -nostartfiles -Wl,-Map=.out_gcc/$(TARGET).map,--cref
+LDFLAGS += -lc -lm -lgcc -L./ -L$(CFG_LIB_DIR) -mthumb-interwork
 LDFLAGS += -T$(LDSCRIPT).ld
 
 # Define programs and commands.
@@ -204,13 +207,13 @@ build: elf hex
 # Link: create ELF output file from object files.
 elf: $(OBJ)
 	$(CC) -c $(ALL_ASFLAGS) $(ASRC) -o .obj/$(ASRC:.s=.o)
-	@echo $(MSG_LINKING) .out/$(TARGET).elf
-	$(CC) $(ALL_CFLAGS) $(addprefix .obj/,$(OBJ)) --output .out/$(TARGET).elf $(LDFLAGS)
+	@echo $(MSG_LINKING) .out_gcc/$(TARGET).elf
+	$(CC) $(ALL_CFLAGS) $(addprefix .obj/,$(OBJ)) --output .out_gcc/$(TARGET).elf $(LDFLAGS)
 
 hex:
 	@echo
 	@echo $(MSG_FLASH) hex
-	$(OBJCOPY) -O $(FORMAT) .out/$(TARGET).elf .out/$(TARGET).hex
+	$(OBJCOPY) -O $(FORMAT) .out_gcc/$(TARGET).elf .out_gcc/$(TARGET).hex
 
 # Eye candy.
 begin:
@@ -221,10 +224,10 @@ prebuild:
 	@if [ ! -e .dep ]; then mkdir .dep; fi;
 	@if [ ! -e .obj ]; then mkdir .obj; fi;
 	@if [ ! -e .lst ]; then mkdir .lst; fi;
-	@if [ ! -e .out ]; then mkdir .out; fi;
+	@if [ ! -e .out_gcc ]; then mkdir .out_gcc; fi;
 
 postbuild:
-	$(OBJDUMP) -xD .out/$(TARGET).ELF --disassembler-options=force-thumb > .out/$(TARGET).asm
+	$(OBJDUMP) -xD .out_gcc/$(TARGET).ELF --disassembler-options=force-thumb > .out_gcc/$(TARGET).asm
 
 finished:
 	@echo $(MSG_ERRORS_NONE)
@@ -233,11 +236,11 @@ end:
 	@echo $(MSG_END)
 	
 # Display size of file.
-HEXSIZE = $(SIZE) --target=$(FORMAT) .out/$(TARGET).hex
-ELFSIZE = $(SIZE) -A .out/$(TARGET).elf
+HEXSIZE = $(SIZE) --target=$(FORMAT) .out_gcc/$(TARGET).hex
+ELFSIZE = $(SIZE) -A .out_gcc/$(TARGET).elf
 
 sizeafter:
-	@if [ -f .out/$(TARGET).elf ]; then echo; echo $(MSG_SIZE); $(ELFSIZE); fi;
+	@if [ -f .out_gcc/$(TARGET).elf ]; then echo; echo $(MSG_SIZE); $(ELFSIZE); fi;
 
 # Compile: create object files from C source files.
 %.o : %.c
@@ -261,11 +264,11 @@ clean: begin clean_list finished end
 clean_list:
 	@echo
 	@echo $(MSG_CLEANING)
-	$(REMOVE) -r .out
+	$(REMOVE) -r .out_gcc
 	$(REMOVE) -r .lst
 	$(REMOVE) -r .obj
 	$(REMOVE) -r .dep
-	mkdir .out
+	mkdir .out_gcc
 	mkdir .obj
 	mkdir .lst
 	mkdir .dep

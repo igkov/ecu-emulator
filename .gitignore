@@ -1,7 +1,9 @@
 *.bak
 *.Administrator
 *.dep
+.out
 .out_rel
+.out_gcc
 .out
 .dep
 .lst
