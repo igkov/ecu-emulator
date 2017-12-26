@@ -43,9 +43,6 @@
 
 .global ProtectDelay
 .global SystemInit
-.global leds_init
-.global led_red
-.global led_green
 
 .text
 
@@ -164,17 +161,6 @@ ctor_end:
 //; Jump to C entry point.
                 LDR     R0, =ProtectDelay
                 BLX     R0
-                
-                LDR     R0, =leds_init
-                BLX     R0
-                MOV     R0, #1
-                LDR     R1, =led_green
-                BLX     R1
-                MOV     R0, #0
-                LDR     R1, =led_red
-                BLX     R1
-
-
                 LDR     R0, =SystemInit
                 BLX     R0
                 LDR     R4, =main
@@ -212,13 +198,14 @@ PIOINT1_IRQHandler:
 PIOINT0_IRQHandler:
                 B       .
 
-//; Использование символа __errno, чтобы гарантировать, 
-//; что будет загружена функция __errno из библиотеки libgcaapi.a. 
 //; Если в сборку попадает функция __errno из стандартной библиотеки, 
 //; то в ОЗУ размещается ненужный буфер размером 1024Б и появляется 
-//; дополнительный код. Функция __errno из библиотеки libgcaapi.a 
-//; является заглушкой.
+//; дополнительный код. Функция является заглушкой.
+errno:
                 .word       __errno
+__errno:
+                LDR R0, =errno;
+                BX LR
 
 .end
 //; EOF
