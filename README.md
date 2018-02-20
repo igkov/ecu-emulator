@@ -1,6 +1,6 @@
 # Engine ECU emulator
 
-Engine ECU CAN-BUS emulator (Mitsubishi based). Make simple CAN-BUS events and process some PID-requests. 
+Engine ECU CAN-BUS emulator (Mitsubishi based). Make simple CAN-BUS events and process some PID-requests. This project used for stand-alone debug <a href="https://github.com/igkov/bcomp11">BCOMP software</a>.
 
 More information on <a href="igorkov.org/bcomp11">igorkov.org/bcomp11</a> and <a href="igorkov.org/bcomp11v2">igorkov.org/bcomp11v2</a> pages.
 
