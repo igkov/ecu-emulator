@@ -1,6 +1,7 @@
 *.bak
 *.Administrator
 *.dep
+*.uvgui.*
 .out
 .out_rel
 .out_gcc

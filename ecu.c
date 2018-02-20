@@ -12,6 +12,15 @@
 	4 - transmission 218
 	5 - second update
 	6 - wheel sensor 236
+	other:
+	7 - send id 101
+	8 - send id 212
+	9 - send id 312
+	10 - send id 325
+	11 - send id 415
+	12 - send id 424
+	13 - send id 445
+	14 - send id 447
 
 	igorkov / fsp@igorkov.org / 2016
 	
@@ -184,6 +193,24 @@ void update(int n) {
 
 volatile int async_id = 0;
 
+//
+// 0x100 - 4b - (start) - (-)
+// 0x101 - 1b - 100ms   - (*)
+// 0x110 - 1b - (start) - (-)
+// 0x111 - 3b - (start) - (-)
+// 0x212 - 8b - 20ms    - (*)
+// 0x215 - 8b - 20ms    - (+)
+// 0x218 - 8b - 20ms    - (+)
+// 0x308 - 8b - 20ms    - (+)
+// 0x312 - 8b - 20ms    - (*)
+// 0x325 - 2b - 20ms    - (*)
+// 0x415 - 7b - 100ms   - (*)
+// 0x424 - 8b - 40ms    - (*)
+// 0x445 - 7b - 40ms    - (*)
+// 0x447 - 3b - 40ms    - (*)
+// 0x608 - 8b - 100ms   - (+)
+//
+
 void engine_send608(void) {
 	async_id = 0x608;
 	// 100ms
@@ -210,9 +237,58 @@ void engine_send218(void) {
 
 void engine_send236(void) {
 	async_id = 0x236;
-	// 20ms
+	// 10ms
 	event_set(6, engine_send236, 10);
 }
+
+void engine_send101(void) {
+	async_id = 0x101;
+	// 100ms
+	event_set(7, engine_send101, 100);
+}
+
+void engine_send212(void) {
+	async_id = 0x212;
+	// 20ms
+	event_set(8, engine_send212, 20);
+}
+
+void engine_send312(void) {
+	async_id = 0x312;
+	// 20ms
+	event_set(9, engine_send312, 20);
+}
+
+void engine_send325(void) {
+	async_id = 0x325;
+	// 20ms
+	event_set(10, engine_send325, 20);
+}
+
+void engine_send415(void) {
+	async_id = 0x415;
+	// 100ms
+	event_set(11, engine_send415, 100);
+}
+
+void engine_send424(void) {
+	async_id = 0x424;
+	// 40ms
+	event_set(12, engine_send424, 40);
+}
+
+void engine_send445(void) {
+	async_id = 0x445;
+	// 40ms
+	event_set(13, engine_send445, 40);
+}
+
+void engine_send447(void) {
+	async_id = 0x447;
+	// 40ms
+	event_set(14, engine_send447, 40);
+}
+
 
 void async_send(void) {
 	uint8_t data[8];
@@ -231,6 +307,7 @@ void async_send(void) {
 		data[5] = 0x07;
 		data[6] = 0xE3;
 		data[7] = 0x00;
+		frame_a.len = 8;
 		break;
 	case 0x308:
 		data[0] = 0x00;
@@ -241,6 +318,7 @@ void async_send(void) {
 		data[5] = 0x00;
 		data[6] = 0x00;
 		data[7] = 0x03;
+		frame_a.len = 8;
 		break;
 	case 0x215:
 		data[0] = 0x1E;	// speed
@@ -251,6 +329,7 @@ void async_send(void) {
 		data[5] = 0x8C;
 		data[6] = 0x00;
 		data[7] = 0x00;
+		frame_a.len = 8;
 		break;
 	case 0x218:
 		data[0] = 0x09;
@@ -261,6 +340,7 @@ void async_send(void) {
 		data[5] = 0x80;
 		data[6] = 0x09;
 		data[7] = 0x00;
+		frame_a.len = 8;
 		break;
 	case 0x236:
 		data[0] = 0x3F;
@@ -271,12 +351,82 @@ void async_send(void) {
 		data[5] = 0x00;
 		data[6] = 0x00;
 		data[7] = 0x15;
+		frame_a.len = 8;
+		break;
+	// other
+	case 0x101:
+		data[0] = 0x04;
+		frame_a.len = 1;
+		break;
+	case 0x212:
+		data[0] = 0x00;
+		data[1] = 0xFF;
+		data[2] = 0x00;
+		data[3] = 0x00;
+		data[4] = 0x26;
+		data[5] = 0x68;
+		data[6] = 0x29;
+		data[7] = 0x2B;
+		frame_a.len = 8;
+		break;
+	case 0x312:
+		data[0] = 0x09;
+		data[1] = 0x1c;
+		data[2] = 0x09;
+		data[3] = 0x1c;
+		data[4] = 0x1f;
+		data[5] = 0xff;
+		data[6] = 0x1f;
+		data[7] = 0xff;
+		frame_a.len = 8;
+		break;
+	case 0x325:
+		data[0] = 0x01;
+		data[1] = 0x02;
+		frame_a.len = 2;
+		break;
+	case 0x415:
+		data[0] = 0x00;
+		data[1] = 0xFF;
+		data[2] = 0x00;
+		data[3] = 0x00;
+		data[4] = 0xFF;
+		data[5] = 0x02;
+		data[6] = 0xFF;
+		frame_a.len = 7;
+		break;
+	case 0x424:
+		data[0] = 0x03;
+		data[1] = 0x00;
+		data[2] = 0x0f;
+		data[3] = 0x00;
+		data[4] = 0x29;
+		data[5] = 0x76;
+		data[6] = 0x00;
+		data[7] = 0xf0;
+		frame_a.len = 8;
+		break;
+	case 0x445:
+		data[0] = 0x40;
+		data[1] = 0x00;
+		data[2] = 0x04;
+		data[3] = 0x84;
+		data[4] = 0x10;
+		data[5] = 0x2c;
+		data[6] = 0x00;
+		frame_a.len = 7;
+		break;
+	case 0x447:
+		data[0] = 0x80;
+		data[1] = 0x00;
+		data[2] = 0x05;
+		frame_a.len = 3;
 		break;
 	default:
+		DBG("WARN(%04x)\r\n", frame_a.id);
 		return;
 	}
 
-	frame_a.len = 8;
 	frame_a.format = STANDARD_FORMAT;
 	frame_a.type = DATA_FRAME;
 	memcpy(frame_a.data, data, 8);
@@ -316,7 +466,17 @@ int main (void) {
 	event_set(2, engine_send215, 10); delay_ms(7);
 	event_set(3, engine_send308, 10); delay_ms(7);
 	event_set(4, engine_send218, 10); delay_ms(7);
-	event_set(6, engine_send236, 10); 
+	event_set(6, engine_send236, 10); delay_ms(7);
+	// other
+	event_set(7, engine_send101, 10); delay_ms(7);
+	event_set(8, engine_send212, 10); delay_ms(7);
+	event_set(9, engine_send312, 10); delay_ms(7);
+	event_set(10, engine_send325, 10); delay_ms(7);
+	event_set(11, engine_send415, 10); delay_ms(7);
+	event_set(12, engine_send424, 10); delay_ms(7);
+	event_set(13, engine_send445, 10); delay_ms(7);
+	event_set(14, engine_send447, 10); delay_ms(7);
+
 	DBG("Events setup!\r\n");
 #endif
 
@@ -348,7 +508,7 @@ int main (void) {
 			}
 
 			// Обнволение счетчика секунд:
-
+			// Перенесено в функцию second_update().
 
 			// Отправка асинхронных данных, имитирующих шину NMPS.
 			// Асинхронный обработчик:

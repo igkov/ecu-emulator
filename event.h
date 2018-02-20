@@ -4,7 +4,7 @@
 #include <stdint.h>
 //#include "compiler.h"
 
-#define MAX_EVENT 10
+#define MAX_EVENT 20
 
 typedef void (*timer_event_f)(void);
 
