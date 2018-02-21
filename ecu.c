@@ -478,6 +478,36 @@ int main (void) {
 	event_set(14, engine_send447, 10); delay_ms(7);
 
 	DBG("Events setup!\r\n");
+#else
+
+	// FOR TEMPERATURE TEST:
+
+	while (1) {
+		for (n=1; n<9; n++) {
+			for (pid=0x400; pid<0x500;pid++) {
+				CAN_msg frame_a;
+				frame_a.id = pid;
+				frame_a.len = n;
+				frame_a.format = STANDARD_FORMAT;
+				frame_a.type = DATA_FRAME;
+				memset(frame_a.data, 0x20, n);
+				// 0x10 - -8*C
+				// 0x20 - 10*C
+				// 0x21 - 11*C
+				// 0x22 - ??*C
+				// 0x30	- -18*c
+				// 
+				CAN_wrMsg(&frame_a);
+				
+				delay_ms(5);		
+			}
+		}
+		led_red(0);
+		delay_ms(200);		
+		led_red(1);
+		delay_ms(100);		
+	}
+
 #endif
 
 	// Задаем параметры ЭБУ:
