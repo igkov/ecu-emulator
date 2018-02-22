@@ -286,9 +286,18 @@ void engine_send445(void) {
 void engine_send447(void) {
 	async_id = 0x447;
 	// 40ms
-	event_set(14, engine_send447, 40);
+	event_set(14, engine_send447, 50);
 }
 
+void engine_sendA(void) {
+	//async_id = 0x410; // зажигает подсветку, т=-2
+	async_id = 0xFFF; // перебор
+	// 40ms						
+	event_set(16, engine_sendA, 40);
+}
+
+int g_id = 0x400;
+int g_len = 1;
 
 void async_send(void) {
 	uint8_t data[8];
@@ -422,6 +431,39 @@ void async_send(void) {
 		data[2] = 0x05;
 		frame_a.len = 3;
 		break;
+	case 0x410:
+		// Зажигает подсветку...
+		data[0] = 0x00;
+		break;
+	case 0xFFF:
+rep_case:
+		if (g_id == 0x800) {
+			g_id = 0x001;
+		}
+		switch (g_id) {
+		case 0x308:
+		case 0x215:
+		case 0x218:
+		case 0x236:
+		case 0x101:
+		case 0x212:
+		case 0x312:
+		case 0x325:
+		case 0x415:
+		case 0x424:
+		case 0x445:
+		case 0x447:
+
+		case 0x410: // исключаем
+			g_id++;
+			goto rep_case;
+		default:
+			frame_a.id  = g_id;
+			frame_a.len = 8;
+			memset(frame_a.data, 0xAA, 8);
+			g_id++;
+			break;
+		}
 	default:
 		DBG("WARN(%04x)\r\n", frame_a.id);
 		return;
@@ -460,7 +502,6 @@ int main (void) {
 
 	DBG("Pripheral initialize ok!\r\n");
 
-#if 1
 	event_set(5, second_update, 1000); delay_ms(7);
 	event_set(1, engine_send608, 10); delay_ms(7);
 	event_set(2, engine_send215, 10); delay_ms(7);
@@ -476,12 +517,15 @@ int main (void) {
 	event_set(12, engine_send424, 10); delay_ms(7);
 	event_set(13, engine_send445, 10); delay_ms(7);
 	event_set(14, engine_send447, 10); delay_ms(7);
+	
+	//event_set(15, engine_send584, 10); delay_ms(7);
+	// 40ms: 80 00 00 05 a0 39 00 from RV-meter
 
+	event_set(16, engine_sendA, 10); delay_ms(7);
 	DBG("Events setup!\r\n");
-#else
 
+#if 0
 	// FOR TEMPERATURE TEST:
-
 	while (1) {
 		for (n=1; n<9; n++) {
 			for (pid=0x400; pid<0x500;pid++) {

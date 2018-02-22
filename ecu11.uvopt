@@ -430,10 +430,10 @@
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
-      <ColumnNumber>32</ColumnNumber>
+      <ColumnNumber>13</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
       <TopLine>1</TopLine>
-      <CurrentLine>8</CurrentLine>
+      <CurrentLine>11</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>.\event.c</PathWithFileName>
       <FilenameWithoutPath>event.c</FilenameWithoutPath>
@@ -493,10 +493,10 @@
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
-      <ColumnNumber>20</ColumnNumber>
+      <ColumnNumber>54</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>456</TopLine>
-      <CurrentLine>470</CurrentLine>
+      <TopLine>276</TopLine>
+      <CurrentLine>292</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>.\ecu.c</PathWithFileName>
       <FilenameWithoutPath>ecu.c</FilenameWithoutPath>

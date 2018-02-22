@@ -17,6 +17,7 @@ void SysTick_Handler(void) {
 				pfunc = timer_events[i].pfunc;
 				timer_events[i].pfunc = NULL;
 				pfunc();
+				return;
 			}
 }
 
