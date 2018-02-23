@@ -434,6 +434,18 @@ void async_send(void) {
 	case 0x410:
 		// Зажигает подсветку...
 		data[0] = 0x00;
+		frame_a.len = 1;
+		break;
+	case 0x584:
+		// RV meter
+		data[0] = 0x80; 
+		data[1] = 0x00; 
+		data[2] = 0x00; 
+		data[3] = 0x05; 
+		data[4] = 0xa0; 
+		data[5] = 0x39; 
+		data[6] = 0x00; 
+		frame_a.len = 7;
 		break;
 	case 0xFFF:
 rep_case:
@@ -521,7 +533,7 @@ int main (void) {
 	//event_set(15, engine_send584, 10); delay_ms(7);
 	// 40ms: 80 00 00 05 a0 39 00 from RV-meter
 
-	event_set(16, engine_sendA, 10); delay_ms(7);
+	//event_set(16, engine_sendA, 10); delay_ms(7);
 	DBG("Events setup!\r\n");
 
 #if 0
