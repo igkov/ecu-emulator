@@ -880,7 +880,7 @@ int main (void) {
 
 			case 0x2101: // Блок данных от АКПП (NISSAN)
 				data[0] = 0x10; // Стартовый байт/класс команды
-				data[1] = 0x30; // 6 + 7 * 4 = 34 (полный размер)
+				data[1] = 0x22; // 6 + 7 * 4 = 34 (полный размер)
 				data[2] = 0x61; // 0x40 + 0x21
 				data[3] = 0x01; //        0x01
 				data[4] = 0x01; // A data[3]
@@ -922,8 +922,8 @@ int main (void) {
 				ans_data[28] = 0x1F; // AC
 				//ans_data[29] = 0x20; // AD data[32]
 				ans_data[29] = 130; // calculation 63°C 
-				ans_data[30] = 0x21; // AE
-				ans_data[31] = 0x22; // AF
+				ans_data[30] = 0x21; // AE data[33]
+				ans_data[31] = 0x22; // AF data[34]
 				
 				ans_size = 32;
 				ans_addr = 0x7E9;
