@@ -303,6 +303,10 @@ void async_send(void) {
 	uint8_t data[8];
 	CAN_msg frame_a;
 
+	if (async_id == 0) {
+		return;
+	}
+
 	frame_a.id = async_id;
 	async_id = 0;
 
@@ -616,7 +620,7 @@ int main (void) {
 				memcpy(frame.data, ans_data, 8);
 				CAN_wrMsg(&frame);
 #endif				
-				
+
 				ans_size -= 8;
 				if (ans_size <= 0) {
 					more_data = 0;

@@ -162,9 +162,9 @@ void CAN_setup (void)  {
   }
 
   LPC_CAN->STAT = 0;                            /* reset CAN status register */
-  LPC_CAN->CNTL |= (_CNTL_DAR |                 /* disable automatic retransmision */
+  LPC_CAN->CNTL |= (//_CNTL_DAR |                 /* disable automatic retransmision */
                     _CNTL_IE  |                 /* enable CAN module interrupts */
-                    _CNTL_EIE |                 /* enable CAN error interrupts */
+                    //_CNTL_EIE |                 /* enable CAN error interrupts */
                     _CNTL_SIE );                /* enable CAN status change interrupts */
 
 }
@@ -441,21 +441,6 @@ void CAN_IRQHandler (void)  {
 
   can_int = LPC_CAN->INT;                          /* read interrupt status */
 
-#if 0
-  if (LPC_CAN->STAT & 0x007) {
-	DBG("CAN STAT return %d!\r\n", (LPC_CAN->STAT & 0x007));
-  }
-  if (LPC_CAN->STAT & _STAT_BOFF) {
-	DBG("_STAT_BOFF!\r\n");
-  }
-  if (LPC_CAN->STAT & _STAT_EPASS) {
-	DBG("_STAT_EPASS!\r\n");
-  }
-  if (LPC_CAN->STAT & _STAT_EWARN) {
-	DBG("_STAT_EWARN!\r\n");
-  }
-#endif
-
   switch (can_int) {
     case 0x0000:                                   /* no interrupt */
       ;
@@ -469,7 +454,12 @@ void CAN_IRQHandler (void)  {
 	  }	  
       if (can_stat & _STAT_RXOK) {                   /* RXOK       */	 // got this never to work!
         LPC_CAN->STAT &= ~_STAT_RXOK;                /* reset RXOK */
-	  }	  
+	  }
+	  if (can_stat & 0x0007) {
+		DBG("STAT = %08x, INT = %08x!\r\n", can_stat, can_int);
+		//LPC_CAN->STAT &= ~0x0007;
+		LPC_CAN->STAT = 0;
+	  }
 	  break;
 
     default:                                      /* message object interrupt */

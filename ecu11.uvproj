@@ -163,7 +163,7 @@
             <DriverSelection>4096</DriverSelection>
           </Flash1>
           <Flash2>BIN\UL2CM3.DLL</Flash2>
-          <Flash3>"lpc21isp.exe" (./.out/ecu11.hex -control -term com6 115200 12000)</Flash3>
+          <Flash3>"lpc21isp.exe" (./.out/ecu11.hex -control com6 115200 12000)</Flash3>
           <Flash4></Flash4>
         </Utilities>
         <TargetArmAds>
