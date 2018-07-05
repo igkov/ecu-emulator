@@ -57,7 +57,7 @@ volatile uint8_t new_data = 0;
 volatile uint8_t more_data = 0;
 uint16_t ans_addr = 0xFFFF;
 uint16_t ans_pid = 0xFFFF;
-uint8_t ans_data[32];
+uint8_t ans_data[128];
 int ans_size = 0;
 CAN_msg frame;
 
@@ -754,31 +754,32 @@ int main (void) {
 				#endif
 				break;
 			case 0x0902: // Получение VIN.
-				data[0] = 0x10; 
-				data[1] = 0x14; 
-				data[2] = 0x49; 
-				data[3] = 0x02; 
-				data[4] = 0x01; 
-				data[5] = 0x4d; 
-				data[6] = 0x4d; 
-				data[7] = 0x43;
-				
-				ans_data[0]  = 0x21; 
-				ans_data[1]  = 0x47; 
-				ans_data[2]  = 0x52; 
-				ans_data[3]  = 0x4b; 
-				ans_data[4]  = 0x48; 
-				ans_data[5]  = 0x38; 
-				ans_data[6]  = 0x30; 
-				ans_data[7]  = 0x39;
-				ans_data[8]  = 0x22; 
-				ans_data[9]  = 0x46; 
-				ans_data[10] = 0x5a; 
-				ans_data[11] = 0x30; 
-				ans_data[12] = 0x30; 
-				ans_data[13] = 0x32; 
-				ans_data[14] = 0x32; 
-				ans_data[15] = 0x30;
+				data[0] = 0x10; // Стартовый байт/класс команды ???
+				data[1] = 0x14; // 20 (полный размер данных)
+				data[2] = 0x49; // 0x40 + 0x09
+				data[3] = 0x02; //        0x02
+				data[4] = 0x01; // A
+				data[5] = 0x4d; // B
+				data[6] = 0x4d; // C
+				data[7] = 0x43; // D
+				// Дополнительные данные:
+				ans_data[0]  = 0x21; //
+				ans_data[1]  = 0x47; // E
+				ans_data[2]  = 0x52; // F
+				ans_data[3]  = 0x4b; // G
+				ans_data[4]  = 0x48; // H
+				ans_data[5]  = 0x38; // I
+				ans_data[6]  = 0x30; // J
+				ans_data[7]  = 0x39; // K
+				// Дополнительные данные 2:
+				ans_data[8]  = 0x22; // 
+				ans_data[9]  = 0x46; // L
+				ans_data[10] = 0x5a; // M
+				ans_data[11] = 0x30; // N
+				ans_data[12] = 0x30; // O
+				ans_data[13] = 0x30; // P
+				ans_data[14] = 0x30; // Q
+				ans_data[15] = 0x31; // R
 				
 				ans_size = 16;
 				ans_addr = 0x7E8;
@@ -786,7 +787,7 @@ int main (void) {
 				break;
 			case 0x2103:
 				n = 123456; //km
-				data[0] = 0x06;
+				data[0] = 0x06; // Стартовый байт/класс команды
 				data[1] = 0x61;
 				data[2] = 0x03;
 				data[3] = (n>>24)&0xFF;
@@ -814,35 +815,117 @@ int main (void) {
 			CAN_wrMsg(&frame);
 #endif
 		}
-		
+
+//
+// Alphabet catalog:
+//
+//  1 - [A] - data[3]        27 - [AA] - data[29]
+//  2 - [B] - data[4]        28 - [AB] - data[30]
+//  3 - [C] - data[5]        29 - [AC] - data[31]
+//  4 - [D] - data[6]        30 - [AD] - data[32]
+//  5 - [E] - data[7]        31 - [AE] - data[33]
+//  6 - [F] - data[8]        32 - [AF] - data[34]
+//  7 - [G] - data[9]        33 - [AG] - data[35]
+//  8 - [H] - data[10]       34 - [AH] - data[36]
+//  9 - [I] - data[11]       35 - [AI] - data[37]
+// 10 - [J] - data[12]       36 - [AJ] - data[38]
+// 11 - [K] - data[13]       37 - [AK] - data[39]
+// 12 - [L] - data[14]       38 - [AL] - data[40]
+// 13 - [M] - data[15]       39 - [AM] - data[41]
+// 14 - [N] - data[16]       40 - [AN] - data[42]
+// 15 - [O] - data[17]       41 - [AO] - data[43]
+// 16 - [P] - data[18]       42 - [AP] - data[44]
+// 17 - [Q] - data[19]       43 - [AQ] - data[45]
+// 18 - [R] - data[20]       44 - [AR] - data[46]
+// 19 - [S] - data[21]       45 - [AS] - data[47]
+// 20 - [T] - data[22]       46 - [AT] - data[48]
+// 21 - [U] - data[23]       47 - [AU] - data[49]
+// 22 - [V] - data[24]       48 - [AV] - data[50]
+// 23 - [W] - data[25]       49 - [AW] - data[51]
+// 24 - [X] - data[26]       50 - [AX] - data[52]
+// 25 - [Y] - data[27]       51 - [AY] - data[53]
+// 26 - [Z] - data[28]       52 - [AZ] - data[54]
+
 		if (ecu_at) {
 			DBG("AT ECU process (pid = 0x%04x)...\r\n", pid);
 			memset(data, 0, 8);
 			switch (pid) {
 			case 0x2102: // Блок данных от АКПП.
-				data[0] = 0x10;
-				data[1] = 0x0c;
-				data[2] = 0x61;
-				data[3] = 0x02;
-				data[4] = 0x00;
-				data[5] = 0x06;
-				data[6] = 0xb0;
-				data[7] = 0x00;
+				data[0] = 0x10; // Стартовый байт/класс команды
+				data[1] = 0x0c; // 12 (полный размер)
+				data[2] = 0x61; // 0x40 + 0x21
+				data[3] = 0x02; //        0x02
+				data[4] = 0x00; // A
+				data[5] = 0x06; // B
+				data[6] = 0xb0; // C
+				data[7] = 0x00; // D
 				
-				ans_data[0] = 0x21;
-				ans_data[1] = 0x00;
+				ans_data[0] = 0x21; // 
+				ans_data[1] = 0x00; // E
 				#if 0
-					ans_data[2] = 0x2c;
+					ans_data[2] = 0x2c; // F
 				#else
-					ans_data[2] = (uint8_t)(par.t_at+40);
+					ans_data[2] = (uint8_t)(par.t_at+40); // F
 				#endif
-				ans_data[3] = 0x70;
-				ans_data[4] = 0x00;
-				ans_data[5] = 0x60;
-				ans_data[6] = 0x01;
-				ans_data[7] = 0x00;
+				ans_data[3] = 0x70; // G
+				ans_data[4] = 0x00; // H
+				ans_data[5] = 0x60; // I
+				ans_data[6] = 0x01; // J
+				ans_data[7] = 0x00; // K
 				
 				ans_size = 8;
+				ans_addr = 0x7E9;
+				ans_pid  = pid;
+				break;
+
+			case 0x2101: // Блок данных от АКПП (NISSAN)
+				data[0] = 0x10; // Стартовый байт/класс команды
+				data[1] = 0x30; // 6 + 7 * 4 = 34 (полный размер)
+				data[2] = 0x61; // 0x40 + 0x21
+				data[3] = 0x01; //        0x01
+				data[4] = 0x01; // A data[3]
+				data[5] = 0x02; // B 4
+				data[6] = 0x03; // C 5
+				data[7] = 0x04; // D 6
+				
+				ans_data[0] = 0x21; // PACK1
+				ans_data[1] = 0x06; // E data[7]
+				ans_data[2] = 0x07; // F
+				ans_data[3] = 0x08; // G
+				ans_data[4] = 0x09; // H
+				ans_data[5] = 0x0A; // I
+				ans_data[6] = 0x0B; // J
+				ans_data[7] = 0x0C; // K
+				
+				ans_data[8] = 0x22; // PACK2
+				ans_data[9] = 0x0D; // L data[14]
+				ans_data[10] = 0x0E; // M
+				ans_data[11] = 0x0F; // N
+				ans_data[12] = 0x10; // O
+				ans_data[13] = 0x11; // P
+				ans_data[14] = 0x12; // Q
+				ans_data[15] = 0x13; // R
+				
+				ans_data[16] = 0x23; // PACK3
+				ans_data[17] = 0x14; // S data[21]
+				ans_data[18] = 0x15; // T
+				ans_data[19] = 0x16; // U
+				ans_data[20] = 0x17; // V
+				ans_data[21] = 0x18; // W
+				ans_data[22] = 0x19; // X
+				ans_data[23] = 0x1A; // Y
+				
+				ans_data[24] = 0x24; // PACK4
+				ans_data[25] = 0x1B; // Z data[28]
+				ans_data[26] = 0x1C; // AA
+				ans_data[27] = 0x1D; // AB
+				ans_data[28] = 0x1F; // AC
+				//ans_data[29] = 0x20; // AD data[32]
+				ans_data[29] = 130; // calculation 63°C 
+				ans_data[30] = 0x21; // AE
+				ans_data[31] = 0x22; // AF
+				
+				ans_size = 32;
 				ans_addr = 0x7E9;
 				ans_pid  = pid;
 				break;
